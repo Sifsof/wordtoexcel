@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Convertisseur Word vers Excel</title>
+  <meta name="description" content="Conversion hors ligne de tableaux Word en fichiers Excel structurés. Aucune donnée n'est envoyée sur Internet.">
+  <meta name="theme-color" content="#0D0D0D">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Word vers Excel">
+  <script>
+  /* Diagnostic de démarrage : si un fichier est introuvable, le signaler clairement au lieu d'une page vide. */
+  (function () {
+    var missing = [];
+    window.addEventListener('error', function (e) {
+      var el = e.target;
+      if (el && el.tagName === 'SCRIPT') missing.push(el.getAttribute('src'));
+      else if (el && el.tagName === 'LINK') missing.push(el.getAttribute('href'));
+    }, true);
+    window.addEventListener('load', function () {
+      setTimeout(function () {
+        var absent = [];
+        [['JSZip', 'jszip.min.js'], ['XLSX', 'xlsx.bundle.js'], ['CWE_CONFIG', 'config.js'],
+         ['DocxParser', 'docx-parser.js'], ['ProjectModel', 'project-model.js'],
+         ['ExcelExport', 'excel-export.js'], ['CWE', 'app.js']].forEach(function (pair) {
+          if (typeof window[pair[0]] === 'undefined') absent.push(pair[1]);
+        });
+        var names = [];
+        missing.concat(absent).forEach(function (f) {
+          var n = String(f || '').split('/').pop();
+          if (n && names.indexOf(n) < 0) names.push(n);
+        });
+        if (!names.length) return;
+        var box = document.createElement('div');
+        box.setAttribute('role', 'alert');
+        box.style.cssText = 'position:fixed;left:16px;right:16px;top:16px;z-index:999;background:#3a0d0d;color:#ffd9d9;border:1px solid #E53935;border-radius:10px;padding:16px 18px;font:14px/1.5 system-ui,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.5)';
+        box.innerHTML = '<strong style="font-size:15px">L’application n’a pas pu démarrer.</strong><br>' +
+          'Fichier(s) introuvable(s) ou non chargé(s) : <code>' + names.join(', ') + '</code><br>' +
+          'Vérifiez que <strong>tous</strong> les fichiers sont à la racine du dépôt, sans sous-dossier, puis actualisez la page (Ctrl+F5).';
+        document.body.appendChild(box);
+      }, 600);
+    });
+  })();
+  </script>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="responsive.css">
+</head>
+<body>
+  <noscript><p class="noscript">Cette application a besoin de JavaScript. Activez-le dans les paramètres du navigateur.</p></noscript>
+
+  <div class="app">
+    <aside class="side">
+      <div class="brand">
+        <img src="icon-192.png" alt="" width="42" height="42">
+        <div><strong>Convertisseur</strong><span>Word → Excel</span></div>
+      </div>
+      <nav id="nav" class="nav"></nav>
+      <div class="side-foot">
+        <button id="btn-install" class="ghost">Installer l’application</button>
+        <button id="btn-clear" class="ghost danger">Vider les données locales</button>
+        <p class="credit">Développé par BOUAFIA Nourelabedine<br><span id="app-version"></span></p>
+      </div>
+    </aside>
+
+    <section class="main">
+      <header class="top">
+        <input id="proj-name" class="proj-name" aria-label="Nom du projet" value="Projet sans titre">
+        <div class="top-actions">
+          <button id="btn-undo" class="ghost" title="Annuler (Ctrl+Z)" disabled>↶ Annuler</button>
+          <button id="btn-redo" class="ghost" title="Rétablir (Ctrl+Y)" disabled>↷ Rétablir</button>
+          <span id="status" class="status"></span>
+        </div>
+      </header>
+      <main id="view" class="view"></main>
+    </section>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="jszip.min.js"></script>
+  <script src="xlsx.bundle.js"></script>
+  <script src="config.js"></script>
+  <script src="docx-parser.js"></script>
+  <script src="project-model.js"></script>
+  <script src="excel-export.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
